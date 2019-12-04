@@ -1,4 +1,4 @@
-add_subdirectory(player)
+add_subdirectory(cocoa)
 
 add_executable(${PROJECT_NAME} main.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME-lib})

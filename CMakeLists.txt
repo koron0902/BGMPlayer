@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(BGMPlayer LANGUAGES CXX)
+project(Cocoa LANGUAGES CXX)
 
 set(CMAKE_CXX_EXTENSIONS  OFF)
 set(CMAKE_CXX_STANDARD    17)
@@ -17,8 +17,8 @@ pkg_check_modules(Gtkmm3 gtkmm-3.0)
 include_directories(${Gtkmm3_INCLUDE_DIRS})
 
 # Find OpenAL
-find_package(OpenAL REQUIRED)
-include_directories(${OPENAL_INCLUDE_DIR})
+#find_package(OpenAL REQUIRED)
+#include_directories(${OPENAL_INCLUDE_DIR})
 
 
 add_subdirectory(src)
