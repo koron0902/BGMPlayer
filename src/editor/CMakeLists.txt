@@ -1,4 +1,4 @@
-project(Cocoa-Compiler CXX)
+project(Cocoa-Editor CXX)
 
 file(GLOB_RECURSE SOURCE ./*.cc)
 list(REMOVE_ITEM ${SOURCE} main.cc)
