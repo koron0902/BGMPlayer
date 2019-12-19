@@ -1,0 +1,3 @@
+[submodule "nyquist"]
+	path = 3rd/nyquist
+	url = https://github.com/ddiakopoulos/libnyquist.git

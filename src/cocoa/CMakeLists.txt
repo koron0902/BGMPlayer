@@ -1,11 +1,9 @@
-project(Cocoa-Compiler CXX)
-
 file(GLOB_RECURSE SOURCE ./*.cc)
-list(REMOVE_ITEM ${SOURCE} main.cc)
+#file(GLOB_RECURSE LIBNYQUIST ${CMAKE_BINARY_DIR}/bin/*.a)
 
 add_library(${PROJECT_NAME}-lib ${SOURCE})
-target_include_directories(${PROJECT_NAME}-lib PUBLIC ${$PROJECT_SOURCE_DIR})
+#target_link_libraries(${PROJECT_NAME}-lib
+#				${LIBNYQUIST})
+target_include_directories(${PROJECT_NAME}-lib PUBLIC ${$PROJECT_SOURCE_DIR}/src)
+#target_include_directories(${PROJECT_NAME}-lib PUBLIC ${$PROJECT_SOURCE_DIR}/3rd/nyquist/include/libnyquist)
 set_target_properties(${PROJECT_NAME}-lib PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-
-add_executable(${PROJECT_NAME} main.cc)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib)
