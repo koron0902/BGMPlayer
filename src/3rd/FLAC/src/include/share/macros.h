@@ -35,7 +35,8 @@
  * print and error message if it fails (ie returns a value < 0).
  */
 
-#define FLAC_CHECK_RETURN(x) \
-			{	if ((x) < 0) \
-					printf ("%s : %s\n", #x, strerror (errno)) ; \
-			}
+#define FLAC_CHECK_RETURN(x)                                                   \
+  {                                                                            \
+    if ((x) < 0)                                                               \
+      printf("%s : %s\n", #x, strerror(errno));                                \
+  }

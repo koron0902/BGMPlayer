@@ -68,11 +68,13 @@ extern const FLAC__fixedpoint FLAC__FP_ONE;
 extern const FLAC__fixedpoint FLAC__FP_LN2;
 extern const FLAC__fixedpoint FLAC__FP_E;
 
-#define FLAC__fixedpoint_trunc(x) ((x)>>16)
+#define FLAC__fixedpoint_trunc(x) ((x) >> 16)
 
-#define FLAC__fixedpoint_mul(x, y) ( (FLAC__fixedpoint) ( ((FLAC__int64)(x)*(FLAC__int64)(y)) >> 16 ) )
+#define FLAC__fixedpoint_mul(x, y)                                             \
+  ((FLAC__fixedpoint)(((FLAC__int64)(x) * (FLAC__int64)(y)) >> 16))
 
-#define FLAC__fixedpoint_div(x, y) ( (FLAC__fixedpoint) ( ( ((FLAC__int64)(x)<<32) / (FLAC__int64)(y) ) >> 16 ) )
+#define FLAC__fixedpoint_div(x, y)                                             \
+  ((FLAC__fixedpoint)((((FLAC__int64)(x) << 32) / (FLAC__int64)(y)) >> 16))
 
 /*
  *	FLAC__fixedpoint_log2()
@@ -91,7 +93,8 @@ extern const FLAC__fixedpoint FLAC__FP_E;
  *
  *	The return value will also have 'fracbits' fractional bits.
  */
-FLAC__uint32 FLAC__fixedpoint_log2(FLAC__uint32 x, unsigned fracbits, unsigned precision);
+FLAC__uint32 FLAC__fixedpoint_log2(FLAC__uint32 x, unsigned fracbits,
+                                   unsigned precision);
 
 #endif
 

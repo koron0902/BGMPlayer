@@ -162,8 +162,9 @@
  * in FLAC 1.1.3 is a set of \c #defines in \c export.h of each
  * library's includes (e.g. \c include/FLAC/export.h).  The
  * \c #defines mirror the libraries'
- * <A HREF="http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning">libtool version numbers</A>,
- * e.g. in libFLAC there are \c FLAC_API_VERSION_CURRENT,
+ * <A
+ * HREF="http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning">libtool
+ * version numbers</A>, e.g. in libFLAC there are \c FLAC_API_VERSION_CURRENT,
  * \c FLAC_API_VERSION_REVISION, and \c FLAC_API_VERSION_AGE.
  * These can be used to support multiple versions of an API during the
  * transition phase, e.g.
@@ -241,14 +242,16 @@
  * FLAC__seekable_stream_decoder_set_read_callback(decoder, my_read_callback);
  * FLAC__seekable_stream_decoder_set_seek_callback(decoder, my_seek_callback);
  * FLAC__seekable_stream_decoder_set_tell_callback(decoder, my_tell_callback);
- * FLAC__seekable_stream_decoder_set_length_callback(decoder, my_length_callback);
- * FLAC__seekable_stream_decoder_set_eof_callback(decoder, my_eof_callback);
- * FLAC__seekable_stream_decoder_set_write_callback(decoder, my_write_callback);
- * FLAC__seekable_stream_decoder_set_metadata_callback(decoder, my_metadata_callback);
+ * FLAC__seekable_stream_decoder_set_length_callback(decoder,
+ * my_length_callback); FLAC__seekable_stream_decoder_set_eof_callback(decoder,
+ * my_eof_callback); FLAC__seekable_stream_decoder_set_write_callback(decoder,
+ * my_write_callback);
+ * FLAC__seekable_stream_decoder_set_metadata_callback(decoder,
+ * my_metadata_callback);
  * FLAC__seekable_stream_decoder_set_error_callback(decoder, my_error_callback);
  * FLAC__seekable_stream_decoder_set_client_data(decoder, my_client_data);
- * if(FLAC__seekable_stream_decoder_init(decoder) != FLAC__SEEKABLE_STREAM_DECODER_OK) do_something;
- * \endcode
+ * if(FLAC__seekable_stream_decoder_init(decoder) !=
+ * FLAC__SEEKABLE_STREAM_DECODER_OK) do_something; \endcode
  *
  * In FLAC 1.1.3 it is like this:
  *

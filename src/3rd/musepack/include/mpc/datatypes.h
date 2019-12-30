@@ -19,20 +19,18 @@
 #pragma once
 
 // mpcenc.h
-#define CENTER            448                   // offset for centering current data in Main-array
-#define BLOCK            1152                   // blocksize
-#define ANABUFFER    (BLOCK + CENTER)           // size of PCM-data array for analysis
-
+#define CENTER 448 // offset for centering current data in Main-array
+#define BLOCK 1152 // blocksize
+#define ANABUFFER (BLOCK + CENTER) // size of PCM-data array for analysis
 
 typedef struct {
-	float  L [36];
-	float  R [36];
+  float L[36];
+  float R[36];
 } SubbandFloatTyp;
 
 typedef struct {
-	float  L [ANABUFFER];
-	float  R [ANABUFFER];
-	float  M [ANABUFFER];
-	float  S [ANABUFFER];
+  float L[ANABUFFER];
+  float R[ANABUFFER];
+  float M[ANABUFFER];
+  float S[ANABUFFER];
 } PCMDataTyp;
-

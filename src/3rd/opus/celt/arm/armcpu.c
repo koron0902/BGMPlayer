@@ -35,63 +35,59 @@
 
 #include "armcpu.h"
 #include "cpu_support.h"
-#include "os_support.h"
 #include "opus_types.h"
+#include "os_support.h"
 
-#define OPUS_CPU_ARM_V4    (1)
-#define OPUS_CPU_ARM_EDSP  (1<<1)
-#define OPUS_CPU_ARM_MEDIA (1<<2)
-#define OPUS_CPU_ARM_NEON  (1<<3)
+#define OPUS_CPU_ARM_V4 (1)
+#define OPUS_CPU_ARM_EDSP (1 << 1)
+#define OPUS_CPU_ARM_MEDIA (1 << 2)
+#define OPUS_CPU_ARM_NEON (1 << 3)
 
 #if defined(_MSC_VER)
 /*For GetExceptionCode() and EXCEPTION_ILLEGAL_INSTRUCTION.*/
-# define WIN32_LEAN_AND_MEAN
-# define WIN32_EXTRA_LEAN
-# include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#define WIN32_EXTRA_LEAN
+#include <windows.h>
 
-static OPUS_INLINE opus_uint32 opus_cpu_capabilities(void){
+static OPUS_INLINE opus_uint32 opus_cpu_capabilities(void) {
   opus_uint32 flags;
-  flags=0;
+  flags = 0;
   /* MSVC has no OPUS_INLINE __asm support for ARM, but it does let you __emit
    * instructions via their assembled hex code.
    * All of these instructions should be essentially nops. */
-# if defined(OPUS_ARM_MAY_HAVE_EDSP)
-  __try{
+#if defined(OPUS_ARM_MAY_HAVE_EDSP)
+  __try {
     /*PLD [r13]*/
     __emit(0xF5DDF000);
-    flags|=OPUS_CPU_ARM_EDSP;
-  }
-  __except(GetExceptionCode()==EXCEPTION_ILLEGAL_INSTRUCTION){
+    flags |= OPUS_CPU_ARM_EDSP;
+  } __except (GetExceptionCode() == EXCEPTION_ILLEGAL_INSTRUCTION) {
     /*Ignore exception.*/
   }
-#  if defined(OPUS_ARM_MAY_HAVE_MEDIA)
-  __try{
+#if defined(OPUS_ARM_MAY_HAVE_MEDIA)
+  __try {
     /*SHADD8 r3,r3,r3*/
     __emit(0xE6333F93);
-    flags|=OPUS_CPU_ARM_MEDIA;
-  }
-  __except(GetExceptionCode()==EXCEPTION_ILLEGAL_INSTRUCTION){
+    flags |= OPUS_CPU_ARM_MEDIA;
+  } __except (GetExceptionCode() == EXCEPTION_ILLEGAL_INSTRUCTION) {
     /*Ignore exception.*/
   }
-#   if defined(OPUS_ARM_MAY_HAVE_NEON)
-  __try{
+#if defined(OPUS_ARM_MAY_HAVE_NEON)
+  __try {
     /*VORR q0,q0,q0*/
     __emit(0xF2200150);
-    flags|=OPUS_CPU_ARM_NEON;
-  }
-  __except(GetExceptionCode()==EXCEPTION_ILLEGAL_INSTRUCTION){
+    flags |= OPUS_CPU_ARM_NEON;
+  } __except (GetExceptionCode() == EXCEPTION_ILLEGAL_INSTRUCTION) {
     /*Ignore exception.*/
   }
-#   endif
-#  endif
-# endif
+#endif
+#endif
+#endif
   return flags;
 }
 
 #elif defined(__linux__)
 /* Linux based */
-opus_uint32 opus_cpu_capabilities(void)
-{
+opus_uint32 opus_cpu_capabilities(void) {
   opus_uint32 flags = 0;
   FILE *cpuinfo;
 
@@ -99,44 +95,40 @@ opus_uint32 opus_cpu_capabilities(void)
    * Android */
   cpuinfo = fopen("/proc/cpuinfo", "r");
 
-  if(cpuinfo != NULL)
-  {
+  if (cpuinfo != NULL) {
     /* 512 should be enough for anybody (it's even enough for all the flags that
      * x86 has accumulated... so far). */
     char buf[512];
 
-    while(fgets(buf, 512, cpuinfo) != NULL)
-    {
-# if defined(OPUS_ARM_MAY_HAVE_EDSP) || defined(OPUS_ARM_MAY_HAVE_NEON)
+    while (fgets(buf, 512, cpuinfo) != NULL) {
+#if defined(OPUS_ARM_MAY_HAVE_EDSP) || defined(OPUS_ARM_MAY_HAVE_NEON)
       /* Search for edsp and neon flag */
-      if(memcmp(buf, "Features", 8) == 0)
-      {
+      if (memcmp(buf, "Features", 8) == 0) {
         char *p;
-#  if defined(OPUS_ARM_MAY_HAVE_EDSP)
+#if defined(OPUS_ARM_MAY_HAVE_EDSP)
         p = strstr(buf, " edsp");
-        if(p != NULL && (p[5] == ' ' || p[5] == '\n'))
+        if (p != NULL && (p[5] == ' ' || p[5] == '\n'))
           flags |= OPUS_CPU_ARM_EDSP;
-#  endif
+#endif
 
-#  if defined(OPUS_ARM_MAY_HAVE_NEON)
+#if defined(OPUS_ARM_MAY_HAVE_NEON)
         p = strstr(buf, " neon");
-        if(p != NULL && (p[5] == ' ' || p[5] == '\n'))
+        if (p != NULL && (p[5] == ' ' || p[5] == '\n'))
           flags |= OPUS_CPU_ARM_NEON;
-#  endif
+#endif
       }
-# endif
+#endif
 
-# if defined(OPUS_ARM_MAY_HAVE_MEDIA)
+#if defined(OPUS_ARM_MAY_HAVE_MEDIA)
       /* Search for media capabilities (>= ARMv6) */
-      if(memcmp(buf, "CPU architecture:", 17) == 0)
-      {
+      if (memcmp(buf, "CPU architecture:", 17) == 0) {
         int version;
-        version = atoi(buf+17);
+        version = atoi(buf + 17);
 
-        if(version >= 6)
+        if (version >= 6)
           flags |= OPUS_CPU_ARM_MEDIA;
       }
-# endif
+#endif
     }
 
     fclose(cpuinfo);
@@ -147,24 +139,23 @@ opus_uint32 opus_cpu_capabilities(void)
 /* The feature registers which can tell us what the processor supports are
  * accessible in priveleged modes only, so we can't have a general user-space
  * detection method like on x86.*/
-# error "Configured to use ARM asm but no CPU detection method available for " \
+#error "Configured to use ARM asm but no CPU detection method available for " \
    "your platform.  Reconfigure with --disable-rtcd (or send patches)."
 #endif
 
-int opus_select_arch(void)
-{
+int opus_select_arch(void) {
   opus_uint32 flags = opus_cpu_capabilities();
   int arch = 0;
 
-  if(!(flags & OPUS_CPU_ARM_EDSP))
+  if (!(flags & OPUS_CPU_ARM_EDSP))
     return arch;
   arch++;
 
-  if(!(flags & OPUS_CPU_ARM_MEDIA))
+  if (!(flags & OPUS_CPU_ARM_MEDIA))
     return arch;
   arch++;
 
-  if(!(flags & OPUS_CPU_ARM_NEON))
+  if (!(flags & OPUS_CPU_ARM_NEON))
     return arch;
   arch++;
 

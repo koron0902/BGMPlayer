@@ -19,39 +19,38 @@
 
 #pragma once
 
-# define clip(x,min,max) ( (x) < (min) ? (min) : (x) > (max) ? (max) : (x) )
+#define clip(x, min, max) ((x) < (min) ? (min) : (x) > (max) ? (max) : (x))
 
 #ifdef __cplusplus
 
-# define maxi(A,B)  ( (A) >? (B) )
-# define mini(A,B)  ( (A) <? (B) )
-# define maxd(A,B)  ( (A) >? (B) )
-# define mind(A,B)  ( (A) <? (B) )
-# define maxf(A,B)  ( (A) >? (B) )
-# define minf(A,B)  ( (A) <? (B) )
+#define maxi(A, B)  ( (A) >? (B) )
+#define mini(A, B)  ( (A) <? (B) )
+#define maxd(A, B)  ( (A) >? (B) )
+#define mind(A, B)  ( (A) <? (B) )
+#define maxf(A, B)  ( (A) >? (B) )
+#define minf(A, B)  ( (A) <? (B) )
 
 #else
 
-# define maxi(A,B)  ( (A) > (B)  ?  (A)  :  (B) )
-# define mini(A,B)  ( (A) < (B)  ?  (A)  :  (B) )
-# define maxd(A,B)  ( (A) > (B)  ?  (A)  :  (B) )
-# define mind(A,B)  ( (A) < (B)  ?  (A)  :  (B) )
-# define maxf(A,B)  ( (A) > (B)  ?  (A)  :  (B) )
-# define minf(A,B)  ( (A) < (B)  ?  (A)  :  (B) )
+#define maxi(A, B) ((A) > (B) ? (A) : (B))
+#define mini(A, B) ((A) < (B) ? (A) : (B))
+#define maxd(A, B) ((A) > (B) ? (A) : (B))
+#define mind(A, B) ((A) < (B) ? (A) : (B))
+#define maxf(A, B) ((A) > (B) ? (A) : (B))
+#define minf(A, B) ((A) < (B) ? (A) : (B))
 
 #endif
 
 #ifdef __GNUC__
 
-# define absi(A)    abs   (A)
-# define absf(A)    fabsf (A)
-# define absd(A)    fabs  (A)
+#define absi(A) abs(A)
+#define absf(A) fabsf(A)
+#define absd(A) fabs(A)
 
 #else
 
-# define absi(A)    ( (A) >= 0    ?  (A)  : -(A) )
-# define absf(A)    ( (A) >= 0.f  ?  (A)  : -(A) )
-# define absd(A)    ( (A) >= 0.   ?  (A)  : -(A) )
+#define absi(A) ((A) >= 0 ? (A) : -(A))
+#define absf(A) ((A) >= 0.f ? (A) : -(A))
+#define absd(A) ((A) >= 0. ? (A) : -(A))
 
 #endif
-

@@ -37,33 +37,33 @@
 #pragma once
 #endif
 
-#include <stdlib.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef _MSC_VER
-typedef __int8           mpc_int8_t;
-typedef unsigned __int8  mpc_uint8_t;
-typedef __int16          mpc_int16_t;
+typedef __int8 mpc_int8_t;
+typedef unsigned __int8 mpc_uint8_t;
+typedef __int16 mpc_int16_t;
 typedef unsigned __int16 mpc_uint16_t;
-typedef __int32          mpc_int32_t;
+typedef __int32 mpc_int32_t;
 typedef unsigned __int32 mpc_uint32_t;
-typedef __int64          mpc_int64_t;
+typedef __int64 mpc_int64_t;
 typedef unsigned __int64 mpc_uint64_t;
 #define mpc_inline __inline
 #else
 #include <stdint.h>
-typedef int8_t   mpc_int8_t;
-typedef uint8_t  mpc_uint8_t;
-typedef int16_t  mpc_int16_t;
+typedef int8_t mpc_int8_t;
+typedef uint8_t mpc_uint8_t;
+typedef int16_t mpc_int16_t;
 typedef uint16_t mpc_uint16_t;
-typedef int32_t  mpc_int32_t;
+typedef int32_t mpc_int32_t;
 typedef uint32_t mpc_uint32_t;
-typedef int64_t  mpc_int64_t;
-typedef uint64_t  mpc_uint64_t;
+typedef int64_t mpc_int64_t;
+typedef uint64_t mpc_uint64_t;
 #define mpc_inline inline
 #endif
 
@@ -73,71 +73,69 @@ typedef size_t mpc_size_t;
 typedef mpc_uint8_t mpc_bool_t;
 
 // #define LONG_SEEK_TABLE
-#ifdef LONG_SEEK_TABLE  // define as needed (mpc_uint32_t supports files up to 512 MB)
+#ifdef LONG_SEEK_TABLE // define as needed (mpc_uint32_t supports files up to
+                       // 512 MB)
 typedef mpc_uint64_t mpc_seek_t;
 #else
 typedef mpc_uint32_t mpc_seek_t;
 #endif
 
-# define mpc_int64_min -9223372036854775808ll
-# define mpc_int64_max 9223372036854775807ll
+#define mpc_int64_min -9223372036854775808ll
+#define mpc_int64_max 9223372036854775807ll
 
 typedef struct mpc_quantizer {
-	mpc_int16_t  L [36];
-	mpc_int16_t  R [36];
+  mpc_int16_t L[36];
+  mpc_int16_t R[36];
 } mpc_quantizer;
 
 /// Libmpcdec error codes
 typedef enum mpc_status {
-	// Success.
-    MPC_STATUS_OK        =  0,
-	// Generic failure (I/O error or invalid file).
-    MPC_STATUS_FAIL      = -1
+  // Success.
+  MPC_STATUS_OK = 0,
+  // Generic failure (I/O error or invalid file).
+  MPC_STATUS_FAIL = -1
 } mpc_status;
-
 
 #define MPC_FIXED_POINT_SHIFT 16
 
 #ifdef MPC_FIXED_POINT
-# define MPC_FIXED_POINT_FRACTPART 14
-# define MPC_FIXED_POINT_SCALE_SHIFT (MPC_FIXED_POINT_SHIFT + MPC_FIXED_POINT_FRACTPART)
-# define MPC_FIXED_POINT_SCALE (1 << (MPC_FIXED_POINT_SCALE_SHIFT - 1))
+#define MPC_FIXED_POINT_FRACTPART 14
+#define MPC_FIXED_POINT_SCALE_SHIFT                                            \
+  (MPC_FIXED_POINT_SHIFT + MPC_FIXED_POINT_FRACTPART)
+#define MPC_FIXED_POINT_SCALE (1 << (MPC_FIXED_POINT_SCALE_SHIFT - 1))
 typedef mpc_int32_t MPC_SAMPLE_FORMAT;
 #else
-typedef float       MPC_SAMPLE_FORMAT;
+typedef float MPC_SAMPLE_FORMAT;
 #endif
 
-enum {
-    MPC_FALSE = 0,
-    MPC_TRUE  = !MPC_FALSE
-};
+enum { MPC_FALSE = 0, MPC_TRUE = !MPC_FALSE };
 
 //// 'Cdecl' forces the use of standard C/C++ calling convention ///////
-#if   defined _WIN32
-# define mpc_cdecl           __cdecl
+#if defined _WIN32
+#define mpc_cdecl __cdecl
 #elif defined __ZTC__
-# define mpc_cdecl           _cdecl
+#define mpc_cdecl _cdecl
 #elif defined __TURBOC__
-# define mpc_cdecl           cdecl
+#define mpc_cdecl cdecl
 #else
-# define mpc_cdecl
+#define mpc_cdecl
 #endif
 
 /* DLL building support on win32 hosts */
 #ifndef MPC_API
-#   ifdef DLL_EXPORT      /* defined by libtool (if required) */
-#       define MPC_API __declspec(dllexport)
-#   endif
-#   ifdef MPC_DLL_IMPORT  /* define if linking with this dll */
-#       define MPC_API __declspec(dllimport)
-#   endif
-#   ifndef MPC_API     /* static linking or !_WIN32 */
-#     if defined(__GNUC__) && (__GNUC__ >= 4)
-#       define MPC_API __attribute__ ((visibility("default")))
-#     else
-#       define MPC_API
-#     endif
-#   endif
+#ifdef DLL_EXPORT /* defined by libtool (if required) */
+#define MPC_API __declspec(dllexport)
+#endif
+#ifdef MPC_DLL_IMPORT /* define if linking with this dll */
+#define MPC_API __declspec(dllimport)
+#endif
+#ifndef MPC_API /* static linking or !_WIN32 */
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define MPC_API __attribute__((visibility("default")))
+#else
+#define MPC_API
+#endif
+#endif
 #endif
 
 #ifdef __cplusplus

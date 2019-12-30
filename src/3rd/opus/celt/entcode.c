@@ -1,5 +1,5 @@
 /* Copyright (c) 2001-2011 Timothy B. Terriberry
-*/
+ */
 /*
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@
 #include "config.h"
 #endif
 
-#include "entcode.h"
 #include "arch.h"
+#include "entcode.h"
 
 #if !defined(EC_CLZ)
 /*This is a fallback for systems where we don't know how to access
@@ -38,35 +38,35 @@
   If you are optimizing Opus on a new platform and it has a native CLZ or
    BZR (e.g. cell, MIPS, x86, etc) then making it available to Opus will be
    an easy performance win.*/
-int ec_ilog(opus_uint32 _v){
+int ec_ilog(opus_uint32 _v) {
   /*On a Pentium M, this branchless version tested as the fastest on
      1,000,000,000 random 32-bit integers, edging out a similar version with
      branches, and a 256-entry LUT version.*/
   int ret;
   int m;
-  ret=!!_v;
-  m=!!(_v&0xFFFF0000)<<4;
-  _v>>=m;
-  ret|=m;
-  m=!!(_v&0xFF00)<<3;
-  _v>>=m;
-  ret|=m;
-  m=!!(_v&0xF0)<<2;
-  _v>>=m;
-  ret|=m;
-  m=!!(_v&0xC)<<1;
-  _v>>=m;
-  ret|=m;
-  ret+=!!(_v&0x2);
+  ret = !!_v;
+  m = !!(_v & 0xFFFF0000) << 4;
+  _v >>= m;
+  ret |= m;
+  m = !!(_v & 0xFF00) << 3;
+  _v >>= m;
+  ret |= m;
+  m = !!(_v & 0xF0) << 2;
+  _v >>= m;
+  ret |= m;
+  m = !!(_v & 0xC) << 1;
+  _v >>= m;
+  ret |= m;
+  ret += !!(_v & 0x2);
   return ret;
 }
 #endif
 
-opus_uint32 ec_tell_frac(ec_ctx *_this){
+opus_uint32 ec_tell_frac(ec_ctx *_this) {
   opus_uint32 nbits;
   opus_uint32 r;
-  int         l;
-  int         i;
+  int l;
+  int i;
   /*To handle the non-integral number of bits still left in the encoder/decoder
      state, we compute the worst-case number of bits of val that must be
      encoded to ensure that the value is inside the range for any possible
@@ -79,15 +79,15 @@ opus_uint32 ec_tell_frac(ec_ctx *_this){
      probability of 1/(1<<n) might sometimes appear to use more than n bits.
     This may help explain the surprising result that a newly initialized
      encoder or decoder claims to have used 1 bit.*/
-  nbits=_this->nbits_total<<BITRES;
-  l=EC_ILOG(_this->rng);
-  r=_this->rng>>(l-16);
-  for(i=BITRES;i-->0;){
+  nbits = _this->nbits_total << BITRES;
+  l = EC_ILOG(_this->rng);
+  r = _this->rng >> (l - 16);
+  for (i = BITRES; i-- > 0;) {
     int b;
-    r=r*r>>15;
-    b=(int)(r>>16);
-    l=l<<1|b;
-    r>>=b;
+    r = r * r >> 15;
+    b = (int)(r >> 16);
+    l = l << 1 | b;
+    r >>= b;
   }
-  return nbits-l;
+  return nbits - l;
 }

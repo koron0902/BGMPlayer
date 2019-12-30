@@ -31,7 +31,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include "private/bitmath.h"
@@ -60,50 +60,42 @@
  * silog2(  9) = 5
  * silog2( 10) = 5
  */
-unsigned FLAC__bitmath_silog2(int v)
-{
-	while(1) {
-		if(v == 0) {
-			return 0;
-		}
-		else if(v > 0) {
-			unsigned l = 0;
-			while(v) {
-				l++;
-				v >>= 1;
-			}
-			return l+1;
-		}
-		else if(v == -1) {
-			return 2;
-		}
-		else {
-			v++;
-			v = -v;
-		}
-	}
+unsigned FLAC__bitmath_silog2(int v) {
+  while (1) {
+    if (v == 0) {
+      return 0;
+    } else if (v > 0) {
+      unsigned l = 0;
+      while (v) {
+        l++;
+        v >>= 1;
+      }
+      return l + 1;
+    } else if (v == -1) {
+      return 2;
+    } else {
+      v++;
+      v = -v;
+    }
+  }
 }
 
-unsigned FLAC__bitmath_silog2_wide(FLAC__int64 v)
-{
-	while(1) {
-		if(v == 0) {
-			return 0;
-		}
-		else if(v > 0) {
-			unsigned l = 0;
-			while(v) {
-				l++;
-				v >>= 1;
-			}
-			return l+1;
-		}
-		else if(v == -1) {
-			return 2;
-		}
-		else {
-			v++;
-			v = -v;
-		}
-	}
+unsigned FLAC__bitmath_silog2_wide(FLAC__int64 v) {
+  while (1) {
+    if (v == 0) {
+      return 0;
+    } else if (v > 0) {
+      unsigned l = 0;
+      while (v) {
+        l++;
+        v >>= 1;
+      }
+      return l + 1;
+    } else if (v == -1) {
+      return 2;
+    } else {
+      v++;
+      v = -v;
+    }
+  }
 }

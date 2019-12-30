@@ -29,8 +29,8 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <io.h>
+#include <windows.h>
 #endif
 
 #include <stdlib.h>
@@ -51,9 +51,9 @@
 
 #ifdef _WIN32
 #define fileno _fileno
-static FILE *fopen_utf8 (const char *filename_utf8, const char *mode_utf8);
+static FILE *fopen_utf8(const char *filename_utf8, const char *mode_utf8);
 #if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
-#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
 #endif
 #endif
 
@@ -62,135 +62,118 @@ static FILE *fopen_utf8 (const char *filename_utf8, const char *mode_utf8);
 #define ftell ftello
 #endif
 
-static int32_t read_bytes (void *id, void *data, int32_t bcount)
-{
-    return (int32_t) fread (data, 1, bcount, (FILE*) id);
+static int32_t read_bytes(void *id, void *data, int32_t bcount) {
+  return (int32_t)fread(data, 1, bcount, (FILE *)id);
 }
 
-static int64_t get_pos (void *id)
-{
+static int64_t get_pos(void *id) {
 #ifdef _WIN32
-    return _ftelli64 ((FILE*) id);
+  return _ftelli64((FILE *)id);
 #else
-    return ftell ((FILE*) id);
+  return ftell((FILE *)id);
 #endif
 }
 
-static int set_pos_abs (void *id, int64_t pos)
-{
+static int set_pos_abs(void *id, int64_t pos) {
 #ifdef _WIN32
-    return _fseeki64 (id, pos, SEEK_SET);
+  return _fseeki64(id, pos, SEEK_SET);
 #else
-    return fseek (id, pos, SEEK_SET);
+  return fseek(id, pos, SEEK_SET);
 #endif
 }
 
-static int set_pos_rel (void *id, int64_t delta, int mode)
-{
+static int set_pos_rel(void *id, int64_t delta, int mode) {
 #ifdef _WIN32
-    return _fseeki64 (id, delta, mode);
+  return _fseeki64(id, delta, mode);
 #else
-    return fseek (id, delta, mode);
+  return fseek(id, delta, mode);
 #endif
 }
 
-static int push_back_byte (void *id, int c)
-{
-    return ungetc (c, id);
-}
+static int push_back_byte(void *id, int c) { return ungetc(c, id); }
 
 #ifdef _WIN32
 
-static int64_t get_length (void *id)
-{
-    LARGE_INTEGER Size;
-    HANDLE        fHandle;
+static int64_t get_length(void *id) {
+  LARGE_INTEGER Size;
+  HANDLE fHandle;
 
-    if (id == NULL)
-        return 0;
+  if (id == NULL)
+    return 0;
 
-    fHandle = (HANDLE)_get_osfhandle(_fileno((FILE*) id));
-    if (fHandle == INVALID_HANDLE_VALUE)
-        return 0;
+  fHandle = (HANDLE)_get_osfhandle(_fileno((FILE *)id));
+  if (fHandle == INVALID_HANDLE_VALUE)
+    return 0;
 
-    Size.u.LowPart = GetFileSize(fHandle, &Size.u.HighPart);
+  Size.u.LowPart = GetFileSize(fHandle, &Size.u.HighPart);
 
-    if (Size.u.LowPart == INVALID_FILE_SIZE && GetLastError() != NO_ERROR)
-        return 0;
+  if (Size.u.LowPart == INVALID_FILE_SIZE && GetLastError() != NO_ERROR)
+    return 0;
 
-    return (int64_t)Size.QuadPart;
+  return (int64_t)Size.QuadPart;
 }
 
 #else
 
-static int64_t get_length (void *id)
-{
-    FILE *file = id;
-    struct stat statbuf;
+static int64_t get_length(void *id) {
+  FILE *file = id;
+  struct stat statbuf;
 
-    if (!file || fstat (fileno (file), &statbuf) || !S_ISREG(statbuf.st_mode))
-        return 0;
+  if (!file || fstat(fileno(file), &statbuf) || !S_ISREG(statbuf.st_mode))
+    return 0;
 
-    return statbuf.st_size;
+  return statbuf.st_size;
 }
 
 #endif
 
-static int can_seek (void *id)
-{
-    FILE *file = id;
-    struct stat statbuf;
+static int can_seek(void *id) {
+  FILE *file = id;
+  struct stat statbuf;
 
-    return file && !fstat (fileno (file), &statbuf) && S_ISREG(statbuf.st_mode);
+  return file && !fstat(fileno(file), &statbuf) && S_ISREG(statbuf.st_mode);
 }
 
-static int32_t write_bytes (void *id, void *data, int32_t bcount)
-{
-    return (int32_t) fwrite (data, 1, bcount, (FILE*) id);
+static int32_t write_bytes(void *id, void *data, int32_t bcount) {
+  return (int32_t)fwrite(data, 1, bcount, (FILE *)id);
 }
 
 #ifdef _WIN32
 
-static int truncate_here (void *id)
-{
-    FILE *file = id;
-    int64_t curr_pos = _ftelli64 (file);
+static int truncate_here(void *id) {
+  FILE *file = id;
+  int64_t curr_pos = _ftelli64(file);
 
-    return _chsize_s (fileno (file), curr_pos);
+  return _chsize_s(fileno(file), curr_pos);
 }
 
 #else
 
-static int truncate_here (void *id)
-{
-    FILE *file = id;
-    off_t curr_pos = ftell (file);
+static int truncate_here(void *id) {
+  FILE *file = id;
+  off_t curr_pos = ftell(file);
 
-    return ftruncate (fileno (file), curr_pos);
+  return ftruncate(fileno(file), curr_pos);
 }
 
 #endif
 
-static int close_stream (void *id)
-{
-    return fclose ((FILE*) id);
-}
+static int close_stream(void *id) { return fclose((FILE *)id); }
 
 //  int32_t (*read_bytes)(void *id, void *data, int32_t bcount);
 //  int32_t (*write_bytes)(void *id, void *data, int32_t bcount);
-//  int64_t (*get_pos)(void *id);                               // new signature for large files
-//  int (*set_pos_abs)(void *id, int64_t pos);                  // new signature for large files
-//  int (*set_pos_rel)(void *id, int64_t delta, int mode);      // new signature for large files
-//  int (*push_back_byte)(void *id, int c);
-//  int64_t (*get_length)(void *id);                            // new signature for large files
-//  int (*can_seek)(void *id);
-//  int (*truncate_here)(void *id);                             // new function to truncate file at current position
-//  int (*close)(void *id);                                     // new function to close file
+//  int64_t (*get_pos)(void *id);                               // new signature
+//  for large files int (*set_pos_abs)(void *id, int64_t pos); // new signature
+//  for large files int (*set_pos_rel)(void *id, int64_t delta, int mode); //
+//  new signature for large files int (*push_back_byte)(void *id, int c);
+//  int64_t (*get_length)(void *id);                            // new signature
+//  for large files int (*can_seek)(void *id); int (*truncate_here)(void *id);
+//  // new function to truncate file at current position int (*close)(void *id);
+//  // new function to close file
 
 static WavpackStreamReader64 freader = {
-    read_bytes, write_bytes, get_pos, set_pos_abs, set_pos_rel,
-    push_back_byte, get_length, can_seek, truncate_here, close_stream
-};
+    read_bytes,     write_bytes, get_pos,  set_pos_abs,   set_pos_rel,
+    push_back_byte, get_length,  can_seek, truncate_here, close_stream};
 
 // This function attempts to open the specified WavPack file for reading. If
 // this fails for any reason then an appropriate message is copied to "error"
@@ -222,43 +205,44 @@ static WavpackStreamReader64 freader = {
 // (and again, decoding must start at the beginning of the block containing
 // the seek sample).
 
-WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int flags, int norm_offset)
-{
-    char *file_mode = (flags & OPEN_EDIT_TAGS) ? "r+b" : "rb";
-    FILE *(*fopen_func)(const char *, const char *) = fopen;
-    FILE *wv_id, *wvc_id;
+WavpackContext *WavpackOpenFileInput(const char *infilename, char *error,
+                                     int flags, int norm_offset) {
+  char *file_mode = (flags & OPEN_EDIT_TAGS) ? "r+b" : "rb";
+  FILE *(*fopen_func)(const char *, const char *) = fopen;
+  FILE *wv_id, *wvc_id;
 
 #ifdef _WIN32
-    if (flags & OPEN_FILE_UTF8)
-        fopen_func = fopen_utf8;
+  if (flags & OPEN_FILE_UTF8)
+    fopen_func = fopen_utf8;
 #endif
 
-    if (*infilename == '-') {
-        wv_id = stdin;
+  if (*infilename == '-') {
+    wv_id = stdin;
 #if defined(_WIN32)
-        _setmode (fileno (stdin), O_BINARY);
+    _setmode(fileno(stdin), O_BINARY);
 #endif
 #if defined(__OS2__)
-        setmode (fileno (stdin), O_BINARY);
+    setmode(fileno(stdin), O_BINARY);
 #endif
-    }
-    else if ((wv_id = fopen_func (infilename, file_mode)) == NULL) {
-        if (error) strcpy (error, (flags & OPEN_EDIT_TAGS) ? "can't open file for editing" : "can't open file");
-        return NULL;
-    }
+  } else if ((wv_id = fopen_func(infilename, file_mode)) == NULL) {
+    if (error)
+      strcpy(error, (flags & OPEN_EDIT_TAGS) ? "can't open file for editing"
+                                             : "can't open file");
+    return NULL;
+  }
 
-    if (wv_id != stdin && (flags & OPEN_WVC)) {
-        char *in2filename = malloc (strlen (infilename) + 10);
+  if (wv_id != stdin && (flags & OPEN_WVC)) {
+    char *in2filename = malloc(strlen(infilename) + 10);
 
-        strcpy (in2filename, infilename);
-        strcat (in2filename, "c");
-        wvc_id = fopen_func (in2filename, "rb");
-        free (in2filename);
-    }
-    else
-        wvc_id = NULL;
+    strcpy(in2filename, infilename);
+    strcat(in2filename, "c");
+    wvc_id = fopen_func(in2filename, "rb");
+    free(in2filename);
+  } else
+    wvc_id = NULL;
 
-    return WavpackOpenFileInputEx64 (&freader, wv_id, wvc_id, error, flags, norm_offset);
+  return WavpackOpenFileInputEx64(&freader, wv_id, wvc_id, error, flags,
+                                  norm_offset);
 }
 
 #ifdef _WIN32
@@ -266,39 +250,34 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 // The following code Copyright (c) 2004-2012 LoRd_MuldeR <mulder2@gmx.de>
 // (see cli/win32_unicode_support.c for full license)
 
-static wchar_t *utf8_to_utf16(const char *input)
-{
-	wchar_t *Buffer;
-	int BuffSize = 0, Result = 0;
+static wchar_t *utf8_to_utf16(const char *input) {
+  wchar_t *Buffer;
+  int BuffSize = 0, Result = 0;
 
-	BuffSize = MultiByteToWideChar(CP_UTF8, 0, input, -1, NULL, 0);
-	Buffer = (wchar_t*) malloc(sizeof(wchar_t) * BuffSize);
-	if(Buffer)
-	{
-		Result = MultiByteToWideChar(CP_UTF8, 0, input, -1, Buffer, BuffSize);
-	}
+  BuffSize = MultiByteToWideChar(CP_UTF8, 0, input, -1, NULL, 0);
+  Buffer = (wchar_t *)malloc(sizeof(wchar_t) * BuffSize);
+  if (Buffer) {
+    Result = MultiByteToWideChar(CP_UTF8, 0, input, -1, Buffer, BuffSize);
+  }
 
-	return ((Result > 0) && (Result <= BuffSize)) ? Buffer : NULL;
+  return ((Result > 0) && (Result <= BuffSize)) ? Buffer : NULL;
 }
 
+static FILE *fopen_utf8(const char *filename_utf8, const char *mode_utf8) {
+  FILE *ret = NULL;
+  wchar_t *filename_utf16 = utf8_to_utf16(filename_utf8);
+  wchar_t *mode_utf16 = utf8_to_utf16(mode_utf8);
 
-static FILE *fopen_utf8(const char *filename_utf8, const char *mode_utf8)
-{
-	FILE *ret = NULL;
-	wchar_t *filename_utf16 = utf8_to_utf16(filename_utf8);
-	wchar_t *mode_utf16 = utf8_to_utf16(mode_utf8);
-	
-	if(filename_utf16 && mode_utf16)
-	{
-		ret = _wfopen(filename_utf16, mode_utf16);
-	}
+  if (filename_utf16 && mode_utf16) {
+    ret = _wfopen(filename_utf16, mode_utf16);
+  }
 
-	if(filename_utf16) free(filename_utf16);
-	if(mode_utf16) free(mode_utf16);
+  if (filename_utf16)
+    free(filename_utf16);
+  if (mode_utf16)
+    free(mode_utf16);
 
-	return ret;
+  return ret;
 }
 
 #endif
-
-

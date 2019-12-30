@@ -45,7 +45,6 @@
 extern "C" {
 #endif
 
-
 /// \brief Stream reader interface structure.
 ///
 /// This is the structure you must supply to the musepack decoding library
@@ -53,24 +52,24 @@ extern "C" {
 /// a functional reader.
 typedef struct mpc_reader_t mpc_reader;
 struct mpc_reader_t {
-    /// Reads size bytes of data into buffer at ptr.
-    mpc_int32_t (*read)(mpc_reader *p_reader, void *ptr, mpc_int32_t size);
+  /// Reads size bytes of data into buffer at ptr.
+  mpc_int32_t (*read)(mpc_reader *p_reader, void *ptr, mpc_int32_t size);
 
-    /// Seeks to byte position offset.
-    mpc_bool_t (*seek)(mpc_reader *p_reader, mpc_int32_t offset);
+  /// Seeks to byte position offset.
+  mpc_bool_t (*seek)(mpc_reader *p_reader, mpc_int32_t offset);
 
-    /// Returns the current byte offset in the stream.
-    mpc_int32_t (*tell)(mpc_reader *p_reader);
+  /// Returns the current byte offset in the stream.
+  mpc_int32_t (*tell)(mpc_reader *p_reader);
 
-    /// Returns the total length of the source stream, in bytes.
-    mpc_int32_t (*get_size)(mpc_reader *p_reader);
+  /// Returns the total length of the source stream, in bytes.
+  mpc_int32_t (*get_size)(mpc_reader *p_reader);
 
-    /// True if the stream is a seekable stream.
-    mpc_bool_t (*canseek)(mpc_reader *p_reader);
+  /// True if the stream is a seekable stream.
+  mpc_bool_t (*canseek)(mpc_reader *p_reader);
 
-    /// Field that can be used to identify a particular instance of
-    /// reader or carry along data associated with that reader.
-    void *data;
+  /// Field that can be used to identify a particular instance of
+  /// reader or carry along data associated with that reader.
+  void *data;
 };
 
 /// Initializes reader with default stdio file reader implementation.  Use
@@ -78,14 +77,16 @@ struct mpc_reader_t {
 ///
 /// \param r p_reader handle to initialize
 /// \param filename input filename to attach to the reader
-MPC_API mpc_status mpc_reader_init_stdio(mpc_reader *p_reader, const char *filename);
+MPC_API mpc_status mpc_reader_init_stdio(mpc_reader *p_reader,
+                                         const char *filename);
 
 /// Initializes reader with default stdio file reader implementation.  Use
 /// this if you prefer to open the file yourself.
 ///
 /// \param r p_reader handle to initialize
 /// \param p_file input file handle (already open)
-MPC_API mpc_status mpc_reader_init_stdio_stream(mpc_reader * p_reader, FILE * p_file);
+MPC_API mpc_status mpc_reader_init_stdio_stream(mpc_reader *p_reader,
+                                                FILE *p_file);
 
 /// Release reader with default stdio file reader implementation.
 ///
