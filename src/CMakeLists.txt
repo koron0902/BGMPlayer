@@ -10,4 +10,6 @@ target_link_libraries(${PROJECT_NAME}
 		${CMAKE_BINARY_DIR}/libAudioExtention.a
 		${CMAKE_BINARY_DIR}/libNyquist.a
 		asound
+		pulse
+		pulse-simple
 		pthread)
