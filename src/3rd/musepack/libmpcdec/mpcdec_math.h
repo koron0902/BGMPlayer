@@ -52,80 +52,98 @@ extern "C" {
 #define MPC_HAVE_MULHIGH
 #endif
 
-//in fixedpoint mode, results in decode output buffer are in -MPC_FIXED_POINT_SCALE ... MPC_FIXED_POINT_SCALE range
+// in fixedpoint mode, results in decode output buffer are in
+// -MPC_FIXED_POINT_SCALE ... MPC_FIXED_POINT_SCALE range
 
 typedef mpc_int64_t MPC_SAMPLE_FORMAT_MULTIPLY;
 
-#define MAKE_MPC_SAMPLE(X) (MPC_SAMPLE_FORMAT)((double)(X) * (double)(((mpc_int64_t)1)<<MPC_FIXED_POINT_FRACTPART))
-#define MAKE_MPC_SAMPLE_EX(X,Y) (MPC_SAMPLE_FORMAT)((double)(X) * (double)(((mpc_int64_t)1)<<(Y)))
+#define MAKE_MPC_SAMPLE(X)                                                     \
+  (MPC_SAMPLE_FORMAT)((double)(X) *                                            \
+                      (double)(((mpc_int64_t)1) << MPC_FIXED_POINT_FRACTPART))
+#define MAKE_MPC_SAMPLE_EX(X, Y)                                               \
+  (MPC_SAMPLE_FORMAT)((double)(X) * (double)(((mpc_int64_t)1) << (Y)))
 
-#define MPC_MULTIPLY_NOTRUNCATE(X,Y) \
-    (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> MPC_FIXED_POINT_FRACTPART)
+#define MPC_MULTIPLY_NOTRUNCATE(X, Y)                                          \
+  (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >>      \
+   MPC_FIXED_POINT_FRACTPART)
 
-#define MPC_MULTIPLY_EX_NOTRUNCATE(X,Y,Z) \
-    (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> (Z))
+#define MPC_MULTIPLY_EX_NOTRUNCATE(X, Y, Z)                                    \
+  (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> (Z))
 
 #ifdef _DEBUG
-static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2)
-{
-    MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_NOTRUNCATE(item1,item2);
-    assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
-    return (MPC_SAMPLE_FORMAT)temp;
+static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY(MPC_SAMPLE_FORMAT item1,
+                                                 MPC_SAMPLE_FORMAT item2) {
+  MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_NOTRUNCATE(item1, item2);
+  assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
+  return (MPC_SAMPLE_FORMAT)temp;
 }
 
-static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY_EX(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2,unsigned shift)
-{
-    MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_EX_NOTRUNCATE(item1,item2,shift);
-    assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
-    return (MPC_SAMPLE_FORMAT)temp;
+static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY_EX(MPC_SAMPLE_FORMAT item1,
+                                                    MPC_SAMPLE_FORMAT item2,
+                                                    unsigned shift) {
+  MPC_SAMPLE_FORMAT_MULTIPLY temp =
+      MPC_MULTIPLY_EX_NOTRUNCATE(item1, item2, shift);
+  assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
+  return (MPC_SAMPLE_FORMAT)temp;
 }
 
 #else
 
-#define MPC_MULTIPLY(X,Y) ((MPC_SAMPLE_FORMAT)MPC_MULTIPLY_NOTRUNCATE(X,Y))
-#define MPC_MULTIPLY_EX(X,Y,Z) ((MPC_SAMPLE_FORMAT)MPC_MULTIPLY_EX_NOTRUNCATE(X,Y,Z))
+#define MPC_MULTIPLY(X, Y) ((MPC_SAMPLE_FORMAT)MPC_MULTIPLY_NOTRUNCATE(X, Y))
+#define MPC_MULTIPLY_EX(X, Y, Z)                                               \
+  ((MPC_SAMPLE_FORMAT)MPC_MULTIPLY_EX_NOTRUNCATE(X, Y, Z))
 
 #endif
 
 #ifdef MPC_HAVE_MULHIGH
-#define MPC_MULTIPLY_FRACT(X,Y) _MulHigh(X,Y)
+#define MPC_MULTIPLY_FRACT(X, Y) _MulHigh(X, Y)
 #else
-#define MPC_MULTIPLY_FRACT(X,Y) MPC_MULTIPLY_EX(X,Y,32)
+#define MPC_MULTIPLY_FRACT(X, Y) MPC_MULTIPLY_EX(X, Y, 32)
 #endif
 
-#define MPC_MAKE_FRACT_CONST(X) (MPC_SAMPLE_FORMAT)((X) * (double)(((mpc_int64_t)1)<<32) )
-#define MPC_MULTIPLY_FRACT_CONST(X,Y) MPC_MULTIPLY_FRACT(X,MPC_MAKE_FRACT_CONST(Y))
-#define MPC_MULTIPLY_FRACT_CONST_FIX(X,Y,Z) ( MPC_MULTIPLY_FRACT(X,MPC_MAKE_FRACT_CONST( Y / (1<<(Z)) )) << (Z) )
-#define MPC_MULTIPLY_FRACT_CONST_SHR(X,Y,Z) MPC_MULTIPLY_FRACT(X,MPC_MAKE_FRACT_CONST( Y / (1<<(Z)) ))
+#define MPC_MAKE_FRACT_CONST(X)                                                \
+  (MPC_SAMPLE_FORMAT)((X) * (double)(((mpc_int64_t)1) << 32))
+#define MPC_MULTIPLY_FRACT_CONST(X, Y)                                         \
+  MPC_MULTIPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y))
+#define MPC_MULTIPLY_FRACT_CONST_FIX(X, Y, Z)                                  \
+  (MPC_MULTIPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y / (1 << (Z)))) << (Z))
+#define MPC_MULTIPLY_FRACT_CONST_SHR(X, Y, Z)                                  \
+  MPC_MULTIPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y / (1 << (Z))))
 
-#define MPC_MULTIPLY_FLOAT_INT(X,Y) ((X)*(Y))
-#define MPC_SCALE_CONST(X,Y,Z) MPC_MULTIPLY_EX(X,MAKE_MPC_SAMPLE_EX(Y,Z),(Z))
-#define MPC_SCALE_CONST_SHL(X,Y,Z,S) MPC_MULTIPLY_EX(X,MAKE_MPC_SAMPLE_EX(Y,Z),(Z)-(S))
-#define MPC_SCALE_CONST_SHR(X,Y,Z,S) MPC_MULTIPLY_EX(X,MAKE_MPC_SAMPLE_EX(Y,Z),(Z)+(S))
-#define MPC_SHR(X,Y) ((X)>>(Y))
-#define MPC_SHL(X,Y) ((X)<<(Y))
+#define MPC_MULTIPLY_FLOAT_INT(X, Y) ((X) * (Y))
+#define MPC_SCALE_CONST(X, Y, Z)                                               \
+  MPC_MULTIPLY_EX(X, MAKE_MPC_SAMPLE_EX(Y, Z), (Z))
+#define MPC_SCALE_CONST_SHL(X, Y, Z, S)                                        \
+  MPC_MULTIPLY_EX(X, MAKE_MPC_SAMPLE_EX(Y, Z), (Z) - (S))
+#define MPC_SCALE_CONST_SHR(X, Y, Z, S)                                        \
+  MPC_MULTIPLY_EX(X, MAKE_MPC_SAMPLE_EX(Y, Z), (Z) + (S))
+#define MPC_SHR(X, Y) ((X) >> (Y))
+#define MPC_SHL(X, Y) ((X) << (Y))
 
 #else
 
-//in floating-point mode, decoded samples are in -1...1 range
+// in floating-point mode, decoded samples are in -1...1 range
 
 #define MAKE_MPC_SAMPLE(X) ((MPC_SAMPLE_FORMAT)(X))
-#define MAKE_MPC_SAMPLE_EX(X,Y) ((MPC_SAMPLE_FORMAT)(X))
+#define MAKE_MPC_SAMPLE_EX(X, Y) ((MPC_SAMPLE_FORMAT)(X))
 
-#define MPC_MULTIPLY_FRACT(X,Y) ((X)*(Y))
+#define MPC_MULTIPLY_FRACT(X, Y) ((X) * (Y))
 #define MPC_MAKE_FRACT_CONST(X) (X)
-#define MPC_MULTIPLY_FRACT_CONST(X,Y) MPC_MULTPLY_FRACT(X,MPC_MAKE_FRACT_CONST(Y))
-#define MPC_MULTIPLY_FRACT_CONST_SHR(X,Y,Z) MPC_MULTIPLY_FRACT(X,MPC_MAKE_FRACT_CONST( Y ))
-#define MPC_MULTIPLY_FRACT_CONST_FIX(X,Y,Z) MPC_MULTIPLY_FRACT(X,MPC_MAKE_FRACT_CONST( Y ))
+#define MPC_MULTIPLY_FRACT_CONST(X, Y)                                         \
+  MPC_MULTPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y))
+#define MPC_MULTIPLY_FRACT_CONST_SHR(X, Y, Z)                                  \
+  MPC_MULTIPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y))
+#define MPC_MULTIPLY_FRACT_CONST_FIX(X, Y, Z)                                  \
+  MPC_MULTIPLY_FRACT(X, MPC_MAKE_FRACT_CONST(Y))
 
-#define MPC_MULTIPLY_FLOAT_INT(X,Y) ((X)*(Y))
-#define MPC_MULTIPLY(X,Y) ((X)*(Y))
-#define MPC_MULTIPLY_EX(X,Y,Z) ((X)*(Y))
-#define MPC_SCALE_CONST(X,Y,Z) ((X)*(Y))
-#define MPC_SCALE_CONST_SHL(X,Y,Z,S) ((X)*(Y))
-#define MPC_SCALE_CONST_SHR(X,Y,Z,S) ((X)*(Y))
-#define MPC_SHR(X,Y) (X)
-#define MPC_SHL(X,Y) (X)
+#define MPC_MULTIPLY_FLOAT_INT(X, Y) ((X) * (Y))
+#define MPC_MULTIPLY(X, Y) ((X) * (Y))
+#define MPC_MULTIPLY_EX(X, Y, Z) ((X) * (Y))
+#define MPC_SCALE_CONST(X, Y, Z) ((X) * (Y))
+#define MPC_SCALE_CONST_SHL(X, Y, Z, S) ((X) * (Y))
+#define MPC_SCALE_CONST_SHR(X, Y, Z, S) ((X) * (Y))
+#define MPC_SHR(X, Y) (X)
+#define MPC_SHL(X, Y) (X)
 
 #endif
 

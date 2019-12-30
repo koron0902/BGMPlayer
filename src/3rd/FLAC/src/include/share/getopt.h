@@ -1,16 +1,16 @@
 /*
-	NOTE:
-	I cannot get the vanilla getopt code to work (i.e. compile only what
-	is needed and not duplicate symbols found in the standard library)
-	on all the platforms that FLAC supports.  In particular the gating
-	of code with the ELIDE_CODE #define is not accurate enough on systems
-	that are POSIX but not glibc.  If someone has a patch that works on
-	GNU/Linux, Darwin, AND Solaris please submit it on the project page:
-		https://sourceforge.net/p/flac/patches/
+        NOTE:
+        I cannot get the vanilla getopt code to work (i.e. compile only what
+        is needed and not duplicate symbols found in the standard library)
+        on all the platforms that FLAC supports.  In particular the gating
+        of code with the ELIDE_CODE #define is not accurate enough on systems
+        that are POSIX but not glibc.  If someone has a patch that works on
+        GNU/Linux, Darwin, AND Solaris please submit it on the project page:
+                https://sourceforge.net/p/flac/patches/
 
-	In the meantime I have munged the global symbols and removed gates
-	around code, while at the same time trying to touch the original as
-	little as possible.
+        In the meantime I have munged the global symbols and removed gates
+        around code, while at the same time trying to touch the original as
+        little as possible.
 */
 /* Declarations for getopt.
    Copyright (C) 1989,90,91,92,93,94,96,97,98 Free Software Foundation, Inc.
@@ -38,7 +38,7 @@
 /*[JEC] was:# define _GETOPT_H 1*/
 /*[JEC] was:#endif*/
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -75,9 +75,9 @@ extern int share__optopt;
 
 /*[JEC] was:#ifndef __need_getopt */
 /* Describe the long-named options requested by the application.
-   The LONG_OPTIONS argument to share__getopt_long or share__getopt_long_only is a vector
-   of `struct share__option' terminated by an element containing a name which is
-   zero.
+   The LONG_OPTIONS argument to share__getopt_long or share__getopt_long_only is
+   a vector of `struct share__option' terminated by an element containing a name
+   which is zero.
 
    The field `has_arg' is:
    share__no_argument		(or 0) if the option does not take an argument,
@@ -95,13 +95,12 @@ extern int share__optopt;
    one).  For long options that have a zero `flag' field, `share__getopt'
    returns the contents of the `val' field.  */
 
-struct share__option
-{
-# if defined __STDC__ && __STDC__
+struct share__option {
+#if defined __STDC__ && __STDC__
   const char *name;
-# else
+#else
   char *name;
-# endif
+#endif
   /* has_arg can't be an enum because some compilers complain about
      type mismatches in all the code that assumes it is an int.  */
   int has_arg;
@@ -111,11 +110,10 @@ struct share__option
 
 /* Names for the values of the `has_arg' field of `struct share__option'.  */
 
-# define share__no_argument		0
-# define share__required_argument	1
-# define share__optional_argument	2
-/*[JEC] was:#endif*/	/* need getopt */
-
+#define share__no_argument 0
+#define share__required_argument 1
+#define share__optional_argument 2
+/*[JEC] was:#endif*/ /* need getopt */
 
 /* Get definitions and prototypes for functions to process the
    arguments in ARGV (ARGC of them, minus the program name) for
@@ -146,23 +144,26 @@ struct share__option
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */
-extern int share__getopt (int argc, char *const *argv, const char *shortopts);
+extern int share__getopt(int argc, char *const *argv, const char *shortopts);
 /*[JEC] was:# else*/ /* not __GNU_LIBRARY__ */
 /*[JEC] was:extern int getopt ();*/
 /*[JEC] was:# endif*/ /* __GNU_LIBRARY__ */
 
 /*[JEC] was:# ifndef __need_getopt*/
-extern int share__getopt_long (int argc, char *const *argv, const char *shortopts,
-		        const struct share__option *longopts, int *longind);
-extern int share__getopt_long_only (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct share__option *longopts, int *longind);
+extern int share__getopt_long(int argc, char *const *argv,
+                              const char *shortopts,
+                              const struct share__option *longopts,
+                              int *longind);
+extern int share__getopt_long_only(int argc, char *const *argv,
+                                   const char *shortopts,
+                                   const struct share__option *longopts,
+                                   int *longind);
 
 /* Internal only.  Users should not call this directly.  */
-extern int share___getopt_internal (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct share__option *longopts, int *longind,
-			     int long_only);
+extern int share___getopt_internal(int argc, char *const *argv,
+                                   const char *shortopts,
+                                   const struct share__option *longopts,
+                                   int *longind, int long_only);
 /*[JEC] was:# endif*/
 /*[JEC] was:#else*/ /* not __STDC__ */
 /*[JEC] was:extern int getopt ();*/
@@ -174,7 +175,7 @@ extern int share___getopt_internal (int argc, char *const *argv,
 /*[JEC] was:# endif*/
 /*[JEC] was:#endif*/ /* __STDC__ */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 

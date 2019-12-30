@@ -44,55 +44,57 @@
 extern "C" {
 #endif
 
-#define SEEKING_TABLE_SIZE  256u
+#define SEEKING_TABLE_SIZE 256u
 // set it to SLOW_SEEKING_WINDOW to not use fast seeking
 #define FAST_SEEKING_WINDOW 32
 // set it to FAST_SEEKING_WINDOW to only use fast seeking
 #define SLOW_SEEKING_WINDOW 0x80000000
 
 enum {
-    MPC_V_MEM           = 2304,
-    MPC_DECODER_MEMSIZE = 16384,  // overall buffer size
+  MPC_V_MEM = 2304,
+  MPC_DECODER_MEMSIZE = 16384, // overall buffer size
 };
 
 struct mpc_decoder_t {
-    /// @name internal state variables
-    //@{
-	mpc_uint32_t stream_version;     ///< Streamversion of stream
-	mpc_int32_t max_band;           ///< Maximum band-index used in stream (0...31)
-	mpc_uint32_t ms;                 ///< Mid/side stereo (0: off, 1: on)
-	mpc_uint32_t channels;           ///< Number of channels in stream
+  /// @name internal state variables
+  //@{
+  mpc_uint32_t stream_version; ///< Streamversion of stream
+  mpc_int32_t max_band;        ///< Maximum band-index used in stream (0...31)
+  mpc_uint32_t ms;             ///< Mid/side stereo (0: off, 1: on)
+  mpc_uint32_t channels;       ///< Number of channels in stream
 
-	mpc_uint64_t samples;            ///< Number of samples in stream
+  mpc_uint64_t samples; ///< Number of samples in stream
 
-	mpc_uint64_t decoded_samples;    ///< Number of samples decoded from file begining
-	mpc_uint32_t samples_to_skip;    ///< Number samples to skip (used for seeking)
-	mpc_int32_t last_max_band;       ///< number of bands used in the last frame
+  mpc_uint64_t
+      decoded_samples; ///< Number of samples decoded from file begining
+  mpc_uint32_t samples_to_skip; ///< Number samples to skip (used for seeking)
+  mpc_int32_t last_max_band;    ///< number of bands used in the last frame
 
-    // randomizer state variables
-    mpc_uint32_t  __r1;
-    mpc_uint32_t  __r2;
+  // randomizer state variables
+  mpc_uint32_t __r1;
+  mpc_uint32_t __r2;
 
-    mpc_int32_t   SCF_Index_L [32] [3];
-    mpc_int32_t   SCF_Index_R [32] [3];       // holds scalefactor-indices
-    mpc_quantizer Q [32];                     // holds quantized samples
-    mpc_int32_t   Res_L [32];
-    mpc_int32_t   Res_R [32];                 // holds the chosen quantizer for each subband
-    mpc_bool_t    DSCF_Flag_L [32];
-    mpc_bool_t    DSCF_Flag_R [32];           // differential SCF used?
-    mpc_int32_t   SCFI_L [32];
-    mpc_int32_t   SCFI_R [32];                // describes order of transmitted SCF
-    mpc_bool_t    MS_Flag[32];                // MS used?
+  mpc_int32_t SCF_Index_L[32][3];
+  mpc_int32_t SCF_Index_R[32][3]; // holds scalefactor-indices
+  mpc_quantizer Q[32];            // holds quantized samples
+  mpc_int32_t Res_L[32];
+  mpc_int32_t Res_R[32]; // holds the chosen quantizer for each subband
+  mpc_bool_t DSCF_Flag_L[32];
+  mpc_bool_t DSCF_Flag_R[32]; // differential SCF used?
+  mpc_int32_t SCFI_L[32];
+  mpc_int32_t SCFI_R[32]; // describes order of transmitted SCF
+  mpc_bool_t MS_Flag[32]; // MS used?
 #ifdef MPC_FIXED_POINT
-    mpc_uint8_t   SCF_shift[256];
+  mpc_uint8_t SCF_shift[256];
 #endif
 
-    MPC_SAMPLE_FORMAT V_L[MPC_V_MEM + 960];
-    MPC_SAMPLE_FORMAT V_R[MPC_V_MEM + 960];
-    MPC_SAMPLE_FORMAT Y_L[36][32];
-    MPC_SAMPLE_FORMAT Y_R[36][32];
-    MPC_SAMPLE_FORMAT SCF[256]; ///< holds adapted scalefactors (for clipping prevention)
-    //@}
+  MPC_SAMPLE_FORMAT V_L[MPC_V_MEM + 960];
+  MPC_SAMPLE_FORMAT V_R[MPC_V_MEM + 960];
+  MPC_SAMPLE_FORMAT Y_L[36][32];
+  MPC_SAMPLE_FORMAT Y_R[36][32];
+  MPC_SAMPLE_FORMAT
+      SCF[256]; ///< holds adapted scalefactors (for clipping prevention)
+                //@}
 };
 
 #ifdef __cplusplus

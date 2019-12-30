@@ -45,42 +45,41 @@ extern "C" {
 #include "musepack/include/mpc/mpcdec.h"
 
 /// Big/little endian 32 bit byte swapping routine.
-static mpc_inline
-mpc_uint32_t mpc_swap32(mpc_uint32_t val) {
-    return (((val & 0xFF000000) >> 24) | ((val & 0x00FF0000) >> 8)
-          | ((val & 0x0000FF00) <<  8) | ((val & 0x000000FF) << 24));
+static mpc_inline mpc_uint32_t mpc_swap32(mpc_uint32_t val) {
+  return (((val & 0xFF000000) >> 24) | ((val & 0x00FF0000) >> 8) |
+          ((val & 0x0000FF00) << 8) | ((val & 0x000000FF) << 24));
 }
 
 typedef struct mpc_block_t {
-	char key[2];	// block key
-	mpc_uint64_t size;	// block size minus the block header size
+  char key[2];       // block key
+  mpc_uint64_t size; // block size minus the block header size
 } mpc_block;
 
 #define MAX_FRAME_SIZE 4352
-#define DEMUX_BUFFER_SIZE (65536 - MAX_FRAME_SIZE) // need some space as sand box
+#define DEMUX_BUFFER_SIZE                                                      \
+  (65536 - MAX_FRAME_SIZE) // need some space as sand box
 
 struct mpc_demux_t {
-	mpc_reader * r;
-	mpc_decoder * d;
-	mpc_streaminfo si;
+  mpc_reader *r;
+  mpc_decoder *d;
+  mpc_streaminfo si;
 
-	// buffer
-	mpc_uint8_t buffer[DEMUX_BUFFER_SIZE + MAX_FRAME_SIZE];
-	mpc_size_t bytes_total;
-	mpc_bits_reader bits_reader;
-	mpc_int32_t block_bits; /// bits remaining in current audio block
-	mpc_uint_t block_frames; /// frames remaining in current audio block
+  // buffer
+  mpc_uint8_t buffer[DEMUX_BUFFER_SIZE + MAX_FRAME_SIZE];
+  mpc_size_t bytes_total;
+  mpc_bits_reader bits_reader;
+  mpc_int32_t block_bits;  /// bits remaining in current audio block
+  mpc_uint_t block_frames; /// frames remaining in current audio block
 
-	// seeking
-	mpc_seek_t * seek_table;
-	mpc_uint_t seek_pwr; /// distance between 2 frames in seek_table = 2^seek_pwr
-	mpc_uint32_t seek_table_size; /// used size in seek_table
+  // seeking
+  mpc_seek_t *seek_table;
+  mpc_uint_t seek_pwr; /// distance between 2 frames in seek_table = 2^seek_pwr
+  mpc_uint32_t seek_table_size; /// used size in seek_table
 
-	// chapters
-	mpc_seek_t chap_pos; /// supposed position of the first chapter block
-	mpc_int_t chap_nb; /// number of chapters (-1 if unknown, 0 if no chapter)
-	mpc_chap_info * chap; /// chapters position and tag
-
+  // chapters
+  mpc_seek_t chap_pos; /// supposed position of the first chapter block
+  mpc_int_t chap_nb;   /// number of chapters (-1 if unknown, 0 if no chapter)
+  mpc_chap_info *chap; /// chapters position and tag
 };
 
 /**
@@ -88,21 +87,26 @@ struct mpc_demux_t {
  * @param key the two caracters key to check
  * @return MPC_STATUS_FAIL if the key is invalid, MPC_STATUS_OK else
  */
-static mpc_inline mpc_status mpc_check_key(char * key)
-{
-	if (key[0] < 65 || key[0] > 90 || key[1] < 65 || key[1] > 90)
-		return MPC_STATUS_FAIL;
-	return MPC_STATUS_OK;
+static mpc_inline mpc_status mpc_check_key(char *key) {
+  if (key[0] < 65 || key[0] > 90 || key[1] < 65 || key[1] > 90)
+    return MPC_STATUS_FAIL;
+  return MPC_STATUS_OK;
 }
 
 /// helper functions used by multiple files
 mpc_uint32_t mpc_random_int(mpc_decoder *d); // in synth_filter.c
 void mpc_decoder_init_quant(mpc_decoder *d, double scale_factor);
-void mpc_decoder_synthese_filter_float(mpc_decoder *d, MPC_SAMPLE_FORMAT* OutData, mpc_int_t channels);
+void mpc_decoder_synthese_filter_float(mpc_decoder *d,
+                                       MPC_SAMPLE_FORMAT *OutData,
+                                       mpc_int_t channels);
 
 #define MPC_IS_FAILURE(X) ((int)(X) < (int)MPC_STATUS_OK)
-#define MPC_AUTO_FAIL(X) { mpc_status s = (X); if (MPC_IS_FAILURE(s)) return s; }
-
+#define MPC_AUTO_FAIL(X)                                                       \
+  {                                                                            \
+    mpc_status s = (X);                                                        \
+    if (MPC_IS_FAILURE(s))                                                     \
+      return s;                                                                \
+  }
 
 #ifdef __cplusplus
 }

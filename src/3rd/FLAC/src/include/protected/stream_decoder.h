@@ -39,22 +39,25 @@
 #endif
 
 typedef struct FLAC__StreamDecoderProtected {
-	FLAC__StreamDecoderState state;
-	FLAC__StreamDecoderInitStatus initstate;
-	unsigned channels;
-	FLAC__ChannelAssignment channel_assignment;
-	unsigned bits_per_sample;
-	unsigned sample_rate; /* in Hz */
-	unsigned blocksize; /* in samples (per channel) */
-	FLAC__bool md5_checking; /* if true, generate MD5 signature of decoded data and compare against signature in the STREAMINFO metadata block */
+  FLAC__StreamDecoderState state;
+  FLAC__StreamDecoderInitStatus initstate;
+  unsigned channels;
+  FLAC__ChannelAssignment channel_assignment;
+  unsigned bits_per_sample;
+  unsigned sample_rate;    /* in Hz */
+  unsigned blocksize;      /* in samples (per channel) */
+  FLAC__bool md5_checking; /* if true, generate MD5 signature of decoded data
+                              and compare against signature in the STREAMINFO
+                              metadata block */
 #if FLAC__HAS_OGG
-	FLAC__OggDecoderAspect ogg_decoder_aspect;
+  FLAC__OggDecoderAspect ogg_decoder_aspect;
 #endif
 } FLAC__StreamDecoderProtected;
 
 /*
  * return the number of input bytes consumed
  */
-unsigned FLAC__stream_decoder_get_input_bytes_unconsumed(const FLAC__StreamDecoder *decoder);
+unsigned FLAC__stream_decoder_get_input_bytes_unconsumed(
+    const FLAC__StreamDecoder *decoder);
 
 #endif

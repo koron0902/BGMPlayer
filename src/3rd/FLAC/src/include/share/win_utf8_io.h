@@ -38,9 +38,9 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <stdarg.h>
 #include <windows.h>
 
 int get_utf8_argv(int *argc, char ***argv);
@@ -59,7 +59,11 @@ int rename_utf8(const char *oldname, const char *newname);
 size_t strlen_utf8(const char *str);
 int win_get_console_width(void);
 int print_console(FILE *stream, const wchar_t *text, size_t len);
-HANDLE WINAPI CreateFile_utf8(const char *lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
+HANDLE WINAPI CreateFile_utf8(const char *lpFileName, DWORD dwDesiredAccess,
+                              DWORD dwShareMode,
+                              LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+                              DWORD dwCreationDisposition,
+                              DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
 
 #ifdef __cplusplus
 } /* extern "C" */

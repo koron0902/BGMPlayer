@@ -37,9 +37,9 @@
 #include <config.h>
 #endif
 
+#include "FLAC/format.h"
 #include "private/cpu.h"
 #include "private/float.h"
-#include "FLAC/format.h"
 
 /*
  *	FLAC__fixed_compute_best_predictor()
@@ -54,26 +54,45 @@
  *	OUT residual_bits_per_sample[0,FLAC__MAX_FIXED_ORDER]
  */
 #ifndef FLAC__INTEGER_ONLY_LIBRARY
-unsigned FLAC__fixed_compute_best_predictor(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
-unsigned FLAC__fixed_compute_best_predictor_wide(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
-# ifndef FLAC__NO_ASM
-#  if (defined FLAC__CPU_IA32 || defined FLAC__CPU_X86_64) && defined FLAC__HAS_X86INTRIN
-#   ifdef FLAC__SSE2_SUPPORTED
-unsigned FLAC__fixed_compute_best_predictor_intrin_sse2(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
-unsigned FLAC__fixed_compute_best_predictor_wide_intrin_sse2(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
-#   endif
-#   ifdef FLAC__SSSE3_SUPPORTED
-unsigned FLAC__fixed_compute_best_predictor_intrin_ssse3(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
-unsigned FLAC__fixed_compute_best_predictor_wide_intrin_ssse3(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
-#   endif
-#  endif
-#  if defined FLAC__CPU_IA32 && defined FLAC__HAS_NASM
-unsigned FLAC__fixed_compute_best_predictor_asm_ia32_mmx_cmov(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
-#  endif
-# endif
+unsigned FLAC__fixed_compute_best_predictor(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+unsigned FLAC__fixed_compute_best_predictor_wide(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+#ifndef FLAC__NO_ASM
+#if (defined FLAC__CPU_IA32 || defined FLAC__CPU_X86_64) &&                    \
+    defined FLAC__HAS_X86INTRIN
+#ifdef FLAC__SSE2_SUPPORTED
+unsigned FLAC__fixed_compute_best_predictor_intrin_sse2(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+unsigned FLAC__fixed_compute_best_predictor_wide_intrin_sse2(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+#endif
+#ifdef FLAC__SSSE3_SUPPORTED
+unsigned FLAC__fixed_compute_best_predictor_intrin_ssse3(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+unsigned FLAC__fixed_compute_best_predictor_wide_intrin_ssse3(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+#endif
+#endif
+#if defined FLAC__CPU_IA32 && defined FLAC__HAS_NASM
+unsigned FLAC__fixed_compute_best_predictor_asm_ia32_mmx_cmov(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+#endif
+#endif
 #else
-unsigned FLAC__fixed_compute_best_predictor(const FLAC__int32 data[], unsigned data_len, FLAC__fixedpoint residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
-unsigned FLAC__fixed_compute_best_predictor_wide(const FLAC__int32 data[], unsigned data_len, FLAC__fixedpoint residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
+unsigned FLAC__fixed_compute_best_predictor(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__fixedpoint residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
+unsigned FLAC__fixed_compute_best_predictor_wide(
+    const FLAC__int32 data[], unsigned data_len,
+    FLAC__fixedpoint residual_bits_per_sample[FLAC__MAX_FIXED_ORDER + 1]);
 #endif
 
 /*
@@ -87,7 +106,8 @@ unsigned FLAC__fixed_compute_best_predictor_wide(const FLAC__int32 data[], unsig
  *	IN order <= FLAC__MAX_FIXED_ORDER fixed-predictor order
  *	OUT residual[0,data_len-1]        residual signal
  */
-void FLAC__fixed_compute_residual(const FLAC__int32 data[], unsigned data_len, unsigned order, FLAC__int32 residual[]);
+void FLAC__fixed_compute_residual(const FLAC__int32 data[], unsigned data_len,
+                                  unsigned order, FLAC__int32 residual[]);
 
 /*
  *	FLAC__fixed_restore_signal()
@@ -99,9 +119,10 @@ void FLAC__fixed_compute_residual(const FLAC__int32 data[], unsigned data_len, u
  *	IN data_len                       length of original signal
  *	IN order <= FLAC__MAX_FIXED_ORDER fixed-predictor order
  *	*** IMPORTANT: the caller must pass in the historical samples:
- *	IN  data[-order,-1]               previously-reconstructed historical samples
- *	OUT data[0,data_len-1]            original signal
+ *	IN  data[-order,-1]               previously-reconstructed historical
+ *samples OUT data[0,data_len-1]            original signal
  */
-void FLAC__fixed_restore_signal(const FLAC__int32 residual[], unsigned data_len, unsigned order, FLAC__int32 data[]);
+void FLAC__fixed_restore_signal(const FLAC__int32 residual[], unsigned data_len,
+                                unsigned order, FLAC__int32 data[]);
 
 #endif

@@ -23,43 +23,45 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// This file implements a simple sound file player based on RtAudio for testing / example purposes.
+// This file implements a simple sound file player based on RtAudio for testing
+// / example purposes.
 
 #ifndef AUDIO_DEVICE_H
 #define AUDIO_DEVICE_H
 
 #include "RingBuffer.h"
 #include "rtaudio/RtAudio.h"
-#include <vector>
 #include <memory>
+#include <vector>
 
 static const uint32_t FRAME_SIZE = 512;
 static const int32_t CHANNELS = 2;
 static const int32_t BUFFER_LENGTH = FRAME_SIZE * CHANNELS;
 
-struct AudioDeviceInfo
-{
-    uint32_t id;
-    uint32_t numChannels;
-    uint32_t sampleRate;
-    uint32_t frameSize;
-    bool isPlaying = false;
+struct AudioDeviceInfo {
+  uint32_t id;
+  uint32_t numChannels;
+  uint32_t sampleRate;
+  uint32_t frameSize;
+  bool isPlaying = false;
 };
 
-class AudioDevice
-{
-    std::unique_ptr<RtAudio> rtaudio;
+class AudioDevice {
+  std::unique_ptr<RtAudio> rtaudio;
+
 protected:
-    AudioDevice(const AudioDevice& r) = delete;
-    AudioDevice & operator = (const AudioDevice& r) = delete;
+  AudioDevice(const AudioDevice &r) = delete;
+  AudioDevice &operator=(const AudioDevice &r) = delete;
+
 public:
-    AudioDeviceInfo info;
-    AudioDevice(int numChannels, int sampleRate, int deviceId = -1);
-    ~AudioDevice();
-    static void ListAudioDevices();
-    bool Open(const int deviceId);
-    bool Play(const std::vector<float> & data);
-    bool Record(const uint32_t lengthInSamples, std::vector<float> & recordingBuffer);
+  AudioDeviceInfo info;
+  AudioDevice(int numChannels, int sampleRate, int deviceId = -1);
+  ~AudioDevice();
+  static void ListAudioDevices();
+  bool Open(const int deviceId);
+  bool Play(const std::vector<float> &data);
+  bool Record(const uint32_t lengthInSamples,
+              std::vector<float> &recordingBuffer);
 };
 
 #endif

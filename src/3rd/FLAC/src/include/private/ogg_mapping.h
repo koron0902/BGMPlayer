@@ -45,7 +45,7 @@ extern const FLAC__byte FLAC__OGG_MAPPING_FIRST_HEADER_PACKET_TYPE; /* = 0x7f */
 /** The length of the 'FLAC' magic in bytes. */
 #define FLAC__OGG_MAPPING_MAGIC_LENGTH (4u)
 
-extern const FLAC__byte * const FLAC__OGG_MAPPING_MAGIC; /* = "FLAC" */
+extern const FLAC__byte *const FLAC__OGG_MAPPING_MAGIC; /* = "FLAC" */
 
 extern const unsigned FLAC__OGG_MAPPING_VERSION_MAJOR_LEN; /* = 8 bits */
 extern const unsigned FLAC__OGG_MAPPING_VERSION_MINOR_LEN; /* = 8 bits */

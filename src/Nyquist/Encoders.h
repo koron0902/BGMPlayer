@@ -28,16 +28,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Common.h"
 
-namespace nqr
-{
-    // A simplistic encoder that takes a buffer of audio, conforms it to the user's
-    // EncoderParams preference, and writes to disk. Be warned, does not support resampling!
-    // @todo support dithering, samplerate conversion, etc.
-    int encode_wav_to_disk(const EncoderParams p, const AudioData * d, const std::string & path);
+namespace nqr {
+// A simplistic encoder that takes a buffer of audio, conforms it to the user's
+// EncoderParams preference, and writes to disk. Be warned, does not support
+// resampling!
+// @todo support dithering, samplerate conversion, etc.
+int encode_wav_to_disk(const EncoderParams p, const AudioData *d,
+                       const std::string &path);
 
-    // Assume data adheres to EncoderParams, except for bit depth and fmt which are re-formatted
-    // to satisfy the Ogg/Opus spec.
-    int encode_opus_to_disk(const EncoderParams p, const AudioData * d, const std::string & path);
+// Assume data adheres to EncoderParams, except for bit depth and fmt which are
+// re-formatted to satisfy the Ogg/Opus spec.
+int encode_opus_to_disk(const EncoderParams p, const AudioData *d,
+                        const std::string &path);
 
 } // end namespace nqr
 

@@ -29,18 +29,18 @@
 #ifndef KISS_FFT_H
 #define KISS_FFT_H
 
-#include <stdlib.h>
-#include <math.h>
 #include "arch.h"
+#include <math.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef USE_SIMD
-# include <xmmintrin.h>
-# define kiss_fft_scalar __m128
-#define KISS_FFT_MALLOC(nbytes) memalign(16,nbytes)
+#include <xmmintrin.h>
+#define kiss_fft_scalar __m128
+#define KISS_FFT_MALLOC(nbytes) memalign(16, nbytes)
 #else
 #define KISS_FFT_MALLOC opus_alloc
 #endif
@@ -48,28 +48,27 @@ extern "C" {
 #ifdef FIXED_POINT
 #include "arch.h"
 
-#  define kiss_fft_scalar opus_int32
-#  define kiss_twiddle_scalar opus_int16
-
+#define kiss_fft_scalar opus_int32
+#define kiss_twiddle_scalar opus_int16
 
 #else
-# ifndef kiss_fft_scalar
+#ifndef kiss_fft_scalar
 /*  default is float */
-#   define kiss_fft_scalar float
-#   define kiss_twiddle_scalar float
-#   define KF_SUFFIX _celt_single
-# endif
+#define kiss_fft_scalar float
+#define kiss_twiddle_scalar float
+#define KF_SUFFIX _celt_single
+#endif
 #endif
 
 typedef struct {
-    kiss_fft_scalar r;
-    kiss_fft_scalar i;
-}kiss_fft_cpx;
+  kiss_fft_scalar r;
+  kiss_fft_scalar i;
+} kiss_fft_cpx;
 
 typedef struct {
-   kiss_twiddle_scalar r;
-   kiss_twiddle_scalar i;
-}kiss_twiddle_cpx;
+  kiss_twiddle_scalar r;
+  kiss_twiddle_scalar i;
+} kiss_twiddle_cpx;
 
 #define MAXFACTORS 8
 /* e.g. an fft of length 128 has 4 factors
@@ -77,15 +76,15 @@ typedef struct {
  4*4*4*2
  */
 
-typedef struct kiss_fft_state{
-    int nfft;
+typedef struct kiss_fft_state {
+  int nfft;
 #ifndef FIXED_POINT
-    kiss_fft_scalar scale;
+  kiss_fft_scalar scale;
 #endif
-    int shift;
-    opus_int16 factors[2*MAXFACTORS];
-    const opus_int16 *bitrev;
-    const kiss_twiddle_cpx *twiddles;
+  int shift;
+  opus_int16 factors[2 * MAXFACTORS];
+  const opus_int16 *bitrev;
+  const kiss_twiddle_cpx *twiddles;
 } kiss_fft_state;
 
 /*typedef struct kiss_fft_state* kiss_fft_cfg;*/
@@ -100,8 +99,8 @@ typedef struct kiss_fft_state{
  *  The return value from fft_alloc is a cfg buffer used internally
  *  by the fft routine or NULL.
  *
- *  If lenmem is NULL, then opus_fft_alloc will allocate a cfg buffer using malloc.
- *  The returned value should be free()d when done to avoid memory leaks.
+ *  If lenmem is NULL, then opus_fft_alloc will allocate a cfg buffer using
+ * malloc. The returned value should be free()d when done to avoid memory leaks.
  *
  *  The state can be placed in a user supplied buffer 'mem':
  *  If lenmem is not NULL and mem is not NULL and *lenmem is large enough,
@@ -113,9 +112,10 @@ typedef struct kiss_fft_state{
  *      buffer size in *lenmem.
  * */
 
-kiss_fft_state *opus_fft_alloc_twiddles(int nfft,void * mem,size_t * lenmem, const kiss_fft_state *base);
+kiss_fft_state *opus_fft_alloc_twiddles(int nfft, void *mem, size_t *lenmem,
+                                        const kiss_fft_state *base);
 
-kiss_fft_state *opus_fft_alloc(int nfft,void * mem,size_t * lenmem);
+kiss_fft_state *opus_fft_alloc(int nfft, void *mem, size_t *lenmem);
 
 /**
  * opus_fft(cfg,in_out_buf)
@@ -127,8 +127,10 @@ kiss_fft_state *opus_fft_alloc(int nfft,void * mem,size_t * lenmem);
  * Note that each element is complex and can be accessed like
     f[k].r and f[k].i
  * */
-void opus_fft(const kiss_fft_state *cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout);
-void opus_ifft(const kiss_fft_state *cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout);
+void opus_fft(const kiss_fft_state *cfg, const kiss_fft_cpx *fin,
+              kiss_fft_cpx *fout);
+void opus_ifft(const kiss_fft_state *cfg, const kiss_fft_cpx *fin,
+               kiss_fft_cpx *fout);
 
 void opus_fft_free(const kiss_fft_state *cfg);
 
